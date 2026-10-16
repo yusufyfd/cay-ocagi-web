@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>Çay Ocağı</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #1a120d; touch-action: none; -webkit-user-select: none; user-select: none; }
+    #unity-canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: #1a120d; }
+    #yukleme { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+      font: 800 22px/1.2 system-ui, sans-serif; color: #f3d9a8; }
+    #cubuk { width: min(360px, 70vw); height: 14px; border-radius: 7px; background: #3a271b; overflow: hidden; }
+    #dolgu { width: 0; height: 100%; background: linear-gradient(90deg, #c8742f, #f0b04a); transition: width .2s; }
+    #hata { color: #ffb4a0; font-size: 15px; max-width: 80vw; text-align: center; font-weight: 600; }
+    #tamekran { position: fixed; left: 50%; transform: translateX(-50%); bottom: 6px; padding: 8px 12px; border: 0; border-radius: 8px; background: rgba(0,0,0,.45);
+      color: #f3d9a8; font: 700 14px system-ui, sans-serif; cursor: pointer; display: none; }
+    #cevir { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; text-align: center; padding: 24px;
+      background: #1a120d; color: #f3d9a8; font: 800 22px/1.4 system-ui, sans-serif; z-index: 5; }
+    @media (orientation: portrait) and (max-width: 900px) { #cevir { display: flex; } }
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <div id="yukleme"><div>Çay Ocağı yükleniyor…</div><div id="cubuk"><div id="dolgu"></div></div><div id="hata"></div></div>
+  <button id="tamekran" type="button">Tam ekran</button>
+  <div id="cevir">Oynamak için telefonu yan çevir</div>
+  <script src="Build/web.loader.js"></script>
+  <script>
+    var config = {
+      arguments: [],
+      dataUrl: "Build/web.data.unityweb",
+      frameworkUrl: "Build/web.framework.js.unityweb",
+      codeUrl: "Build/web.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "Yuyuto Games",
+      productName: "Çay Ocağı",
+      productVersion: "1.0",
+      devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+      showBanner: function (msg, type) { if (type === "error") document.getElementById("hata").textContent = msg; }
+    };
+    var tamekran = document.getElementById("tamekran");
+    createUnityInstance(document.getElementById("unity-canvas"), config, function (p) {
+      document.getElementById("dolgu").style.width = (100 * p) + "%";
+    }).then(function (unity) {
+      document.getElementById("yukleme").style.display = "none";
+      if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
+        tamekran.style.display = "block";
+        tamekran.onclick = function () { unity.SetFullscreen(1); };
+      }
+    }).catch(function (e) {
+      document.getElementById("hata").textContent = "Oyun açılamadı: " + e;
+    });
+  </script>
+</body>
+</html>
